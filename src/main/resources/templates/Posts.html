@@ -42,6 +42,7 @@
                         <h5 class="card-title"  th:text="${Post.getTitle()}"></h5>
                         <p class="card-text" th:text="${Post.getBody()}"></p>
                     <a href="#" class="btn btn-primary">Detail</a>
+                        <a th:href="@{/Delete/{id}(id=${Post.getId()})}" class="btn btn-primary">Delete</a>
                     </div>
                 </div>
         </th:block>

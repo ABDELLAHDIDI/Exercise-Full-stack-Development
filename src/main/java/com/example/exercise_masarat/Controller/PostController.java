@@ -5,10 +5,12 @@ package com.example.exercise_masarat.Controller;
 import com.example.exercise_masarat.Configuration.PaginationUtils;
 import com.example.exercise_masarat.Model.Post;
 import com.example.exercise_masarat.Service.PostService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
@@ -20,14 +22,21 @@ public class PostController {
     int PAGE_SIZE =10;
 
     @Autowired
-    private PostService postService;
+    private  PostService postService;
 
+   static  List<Post> allPosts = new ArrayList<>();
+
+    @PostConstruct
+   void init() throws IOException {
+       postService.getPosts().forEach(post -> {
+     allPosts.add(post);
+       });
+   }
 
 
 @GetMapping("/api/posts")
 public String getPosts(Model model, @RequestParam(defaultValue = "0") int page) {
     try {
-        List<Post> allPosts = postService.getPosts();
         List<Post> paginatedPosts = PaginationUtils.paginate(allPosts, page, PAGE_SIZE);
         model.addAttribute("Posts", paginatedPosts);
     } catch (Exception e) {
@@ -42,7 +51,7 @@ public String getPosts(Model model, @RequestParam(defaultValue = "0") int page) 
     public String  getPost(Model m,@RequestParam(value = "id") String id) throws IOException {
         List<Post> l = new ArrayList<>();
 
-        postService.getPosts().forEach(post -> {
+        allPosts.forEach(post -> {
             if(id.equals(post.getId()+"")  || id.equals(post.getUserId()+"")){
                 l.add(post);
             }
@@ -59,6 +68,17 @@ public String getPosts(Model model, @RequestParam(defaultValue = "0") int page) 
         return "Posts";
     }
 
+    @GetMapping("/Delete/{code}")
+    public String deletedep(Model m,@PathVariable String code) throws IOException {
+
+    for(int i =0 ; i< allPosts.size();i++)
+        if(allPosts.get(i).getId()==Integer.parseInt(code)) {
+            allPosts.remove(i);
+            break;
+        }
+
+        return "redirect:/api/posts";
+    }
 
 
 }

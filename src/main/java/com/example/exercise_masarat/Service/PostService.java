@@ -19,7 +19,7 @@ public class PostService {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<Post> getPosts() throws IOException {
+    public  List<Post> getPosts() throws IOException {
         String jsonResponse = restTemplate.getForObject(POSTS_API_URL, String.class);
         return Arrays.asList(objectMapper.readValue(jsonResponse, Post[].class));
     }
